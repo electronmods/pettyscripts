@@ -3,6 +3,7 @@
 from multiprocessing import Lock, Process, Queue, Value
 import sys
 import time
+from ctypes import c_bool
 
 from pyubx2 import UBXReader
 import pyubx2.ubxtypes_core as ubt
@@ -13,7 +14,8 @@ def ubxsplit(q, c):
         with c.get_lock():
             c.value += 1
         q.put((c.value, data))
-    q.close()
+    with iqueuedone.get_lock():
+        iqueuedone.value = True
 
 def ubxsplitread():
     reading = True
@@ -52,25 +54,35 @@ def ubxsplitread():
             byte1 = stream.read(1)
             if prevbyte == b"\x24" and byte1 in (b"\x47", b"\x50"):  # "$G" or "$P"
                 is_nmea = True  # looks like an NMEA message
-
     return raw_data
 
 def ubxparse(iq, oq, n):
-    while True:
-        curline, unparsed = iq.get()
+    while not iqueuedone.value or not iq.empty():
+        try:
+            curline, unparsed = iq.get()
+        except:
+            continue
         try:
             parsed = UBXReader.parse(unparsed)
         except ube.UBXParseError:
             parsed = None
         # while n.value != curline:
-            # pass
+            # time.sleep(1e-8)
         # print(f'{curline}: {parsed}')
         oq.put((curline, parsed))
+    with oqueuedone.get_lock():
+        oqueuedone.value = True
 
 def outputparsed(oq, n):
-    while True:
+    while not oqueuedone.value or not oq.empty():
         curline, parsed = oq.get()
-        if parsed and parsed.identity == 'NAV-POSLLH': print(f'{curline}: {parsed}')
+        # if parsed and parsed.identity == 'NAV-POSLLH': print(f'{curline}: {parsed}')
+        if parsed:
+            r = str(parsed)
+            if len(r) >= 80:
+                print(f'{curline}: {r[:80]}')
+            else:
+                print(f'{curline}: {r}')
         with n.get_lock():
             n.value += 1
 
@@ -79,11 +91,13 @@ if __name__ == '__main__':
     # ns = manager.Namespace()
     count = Value('i', 0)
     nextup = Value('i', 1)
-    numprocs = 4
+    iqueuedone = Value(c_bool, False)
+    oqueuedone = Value(c_bool, False)
+    numprocs = 18
     allprocs = []
     stream = open(sys.argv[1], 'rb', buffering=100000)
-    inqueue = Queue(1)
-    outqueue = Queue(1)
+    inqueue = Queue(1000)
+    outqueue = Queue(100)
 
     allprocs.append(Process(target=ubxsplit, args=(inqueue, count), daemon=True))
     for i in range(numprocs):
@@ -93,5 +107,3 @@ if __name__ == '__main__':
         i.start()
     for i in allprocs:
         i.join()
-
-
