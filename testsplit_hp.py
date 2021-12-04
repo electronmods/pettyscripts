@@ -9,11 +9,11 @@ from pyubx2 import UBXReader
 import pyubx2.ubxtypes_core as ubt
 import pyubx2.exceptions as ube
 
-def ubxsplit(q, c):
+def ubxsplit(q, iqueuedone):
+    count = 0
     while (data := ubxsplitread()):
-        with c.get_lock():
-            c.value += 1
-        q.put((c.value, data))
+        count += 1
+        q.put((count, data))
     with iqueuedone.get_lock():
         iqueuedone.value = True
 
@@ -93,8 +93,6 @@ def outputparsed(oq, oqueuedone):
             break
 
 if __name__ == '__main__':
-    count = Value('i', 0)
-    nextup = Value('i', 1)
     numprocs = 18
     allprocs = []
     iqueuedone = Value(c_bool, False)
@@ -104,7 +102,7 @@ if __name__ == '__main__':
     inqueue = Queue(100)
     outqueue = Queue(100)
 
-    allprocs.append(Process(target=ubxsplit, args=(inqueue, count), daemon=True))
+    allprocs.append(Process(target=ubxsplit, args=(inqueue, iqueuedone), daemon=True))
     for i in range(numprocs):
         allprocs.append(Process(target=ubxparse, args=(inqueue, outqueue, i, iqueuedone, oqueuedone), daemon=True))
     allprocs.append(Process(target=outputparsed, args=(outqueue, oqueuedone), daemon=True))
@@ -112,5 +110,3 @@ if __name__ == '__main__':
         i.start()
     for i in allprocs:
         i.join()
-
-
