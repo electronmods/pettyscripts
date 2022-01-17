@@ -78,7 +78,7 @@ def outputparsed(oq, oqueuedone):
     n = 1
     ordering = { }
     while True:
-        if oq.empty() is False or all(oqueuedone) is False:
+        if all(oqueuedone) is False or oq.empty() is False :
             curline, parsed = oq.get()
             ordering[curline] = parsed
         if n in ordering:
@@ -89,7 +89,7 @@ def outputparsed(oq, oqueuedone):
                 print(f'{n}: {r}')
             del ordering[n]
             n += 1
-        if oq.empty and all(oqueuedone) is True and ordering == { }:
+        if oq.empty() and all(oqueuedone) is True and ordering == { }:
             break
 
 if __name__ == '__main__':
@@ -102,7 +102,7 @@ if __name__ == '__main__':
     inqueue = Queue(100)
     outqueue = Queue(100)
 
-    allprocs.append(Process(target=ubxsplit, args=(inqueue, iqueuedone), daemon=True))
+    allprocs.append(Process(target=ubxsplit, args=(inqueue, iqueuedone), daemon=False))
     for i in range(numprocs):
         allprocs.append(Process(target=ubxparse, args=(inqueue, outqueue, i, iqueuedone, oqueuedone), daemon=True))
     allprocs.append(Process(target=outputparsed, args=(outqueue, oqueuedone), daemon=True))
