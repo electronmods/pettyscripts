@@ -11,7 +11,7 @@ SELECT
 	ordinal_position,
 	data_type
 FROM information_schema.columns
-WHERE table_name = 'company'
-	AND table_schema = 'b2b'
+WHERE table_name = 'phone_list'
+	AND table_schema = 'distribution'
 ORDER BY ordinal_position
 ```
