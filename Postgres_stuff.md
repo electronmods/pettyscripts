@@ -19,5 +19,6 @@ ORDER BY ordinal_position
 ```sh
 ls data_tables_??.gz | parallel -j6 \
 	"pigz -dc {} | psql -d homedata -h dataserver.lan -c \
-		'COPY distribution.new_table FROM STDIN WITH (FORMAT CSV, HEADER true)'"
+		'COPY distribution.new_table
+		 FROM STDIN WITH (FORMAT CSV, HEADER true)'"
 ```
