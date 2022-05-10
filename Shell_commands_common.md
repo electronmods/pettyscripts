@@ -3,7 +3,7 @@
 ### `parallel` Split huge text file into 1M records files, compressed
 ```sh
 pigz -dc /data/100_million_records.csv.gz | \
-  parallel --header : --pipe -N999999 'pigz -9c > 100_million_records_part_{#}.gz'
+  parallel --header : --pipe -N1000000 'pigz -9c > 100_million_records_part_{#}.gz'
 ```
 ### `rsync` to copy files/folders
 ```sh
