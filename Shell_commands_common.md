@@ -4,11 +4,11 @@
 
 ### Sample random rows (1%) of input data
 ```sh
-awk '{if (rand() <= 0.01) {print}}' < input.csv
+awk 'BEGIN {srand()}; rand() <= 0.01' < input.csv
 ```
 
 ### Skip first `n` rows of input data
-For example, `n=3`:
+For example, `n=3` to begin output at line 3:
 ```sh
 tail -n+3 input.txt
 ```
