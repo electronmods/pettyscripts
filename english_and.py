@@ -5,7 +5,7 @@ from collections.abc import Iterable
 def andify(inlist, quotestr=False, skipinvis=False):
     # if isinstance(inlist, Iterable) is False or type(inlist) is str:
     if isinstance(inlist, Iterable) is False:
-        raise ValueError('Must be a list/tuple/iterable')
+        raise TypeError('Must be a list/tuple/iterable')
     if len(inlist) == 0:
         raise ValueError('Input iterable is empty')
     if quotestr:
