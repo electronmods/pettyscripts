@@ -72,6 +72,11 @@ pushd +1
 env -0 | sort -z | tr '\0' '\n'
 ```
 
+### `find`: List packages imported in Python scripts
+```sh
+find . -name '*.py' | xargs -n1 grep -E -e '^(import|from)' | awk '{print $2}' | sort  | uniq > ~/python_packages.txt
+```
+
 ### Time a command's system/user time
 ```sh
 /usr/bin/time -v long_running_command
