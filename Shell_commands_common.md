@@ -2,7 +2,7 @@
 
 ## Data inspection
 
-### `awk`: Sample random rows (1%) of input data
+### `awk`: Sample random rows (~1%) of input data
 ```sh
 awk 'BEGIN {srand()}; rand() <= 0.01' < input.csv
 ```
@@ -62,9 +62,14 @@ rsync -av src_dir/ target_dir
 
 ## Shell shortcuts
 
-### `dirs`: Move the  directory stack by 1
+### `dirs`: Move the directory stack by 1
 ```sh
 pushd +1
+```
+
+### Environment variables: print and sort
+```sh
+env -0 | sort -z | tr '\0' '\n'
 ```
 
 ### Time a command's system/user time
