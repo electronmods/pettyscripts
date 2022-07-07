@@ -67,9 +67,13 @@ rsync -av src_dir/ target_dir
 pushd +1
 ```
 
-### Environment variables: print and sort
+### `env`: Environment variables: print and sort
 ```sh
 env -0 | sort -z | tr '\0' '\n'
+```
+### `find`: List broken symlinks
+```sh
+find . -type l -exec test ! -e {} \; -print
 ```
 
 ### `find`: List packages imported in Python scripts
@@ -77,7 +81,7 @@ env -0 | sort -z | tr '\0' '\n'
 find . -name '*.py' | xargs -n1 grep -E -e '^(import|from)' | awk '{print $2}' | sort  | uniq > ~/python_packages.txt
 ```
 
-### Time a command's system/user time
+### `time`: Time a command's system/user time
 ```sh
 /usr/bin/time -v long_running_command
 ```
