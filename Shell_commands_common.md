@@ -42,7 +42,7 @@ file -b --mime-type foo.jpg
 ### `parallel`: Split huge text file into 1M records files, compressed
 ```sh
 pigz -dc /data/100_million_records.csv.gz | \
-  parallel --header : --pipe -N1000000 'pigz -9c > 100_million_records_part_{#}.gz'
+  parallel --header : --rpl '{0#} 1 $_=sprintf("%02d",$job->seq())' --pipe -N1000000 'pigz -9c > 100_million_records_part_{0#}.gz'
 ```
 
 ### `rsync`: Copy files/folders
