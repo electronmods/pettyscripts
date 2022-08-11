@@ -60,6 +60,16 @@ rsync -av src_dir/ target_dir
 |Ctrl-A, "|View list of screens and navigate|
 |Ctrl-A, :|Access screen's command line|
 
+### `xargs`: Rename series of files to add dates
+```sh
+# Remove the final xargs's echo statement to commit the actual mv
+DATE=$(date +%Y%m%d)
+ls *.gz | \
+    xargs -I{} bash -c 'echo "{}" ; echo "{}" | sed s/B2BP/B2BP_$(date +%Y%m%d)/g' | \
+    xargs -d"\n" -n2 mv -v
+```
+
+
 ## Shell shortcuts
 
 ### `dirs`: Move the directory stack by 1
