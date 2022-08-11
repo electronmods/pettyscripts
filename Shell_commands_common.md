@@ -51,15 +51,6 @@ pigz -dc /data/100_million_records.csv.gz | \
 rsync -av src_dir/ target_dir
 ```
 
-## GNU Screen functions
-|Sequence|Command|
-|----|----|
-|Ctrl-A, C|Create new screen|
-|Ctrl-A, Ctrl-A|Return to previous screen|
-|Ctrl-A, Ctrl-D|Detach and return to login shell|
-|Ctrl-A, "|View list of screens and navigate|
-|Ctrl-A, :|Access screen's command line|
-
 ### `xargs`: Rename series of files to add dates
 ```sh
 # Remove the final xargs's echo statement to commit the actual mv
@@ -68,7 +59,19 @@ ls *.gz | \
     xargs -I{} bash -c 'echo "{}" ; echo "{}" | sed s/B2BP/B2BP_$(date +%Y%m%d)/g' | \
     xargs -d"\n" -n2 mv -v
 ```
+### `xargs`: Use more than one input variable as an argument
+```sh
+ls *.gz | xargs -d "\n" -n2 bash -c 'echo yep $0 should be $1'
+```
 
+## GNU Screen functions
+|Sequence|Command|
+|----|----|
+|Ctrl-A, C|Create new screen|
+|Ctrl-A, Ctrl-A|Return to previous screen|
+|Ctrl-A, Ctrl-D|Detach and return to login shell|
+|Ctrl-A, "|View list of screens and navigate|
+|Ctrl-A, :|Access screen's command line|
 
 ## Shell shortcuts
 
