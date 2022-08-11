@@ -7,10 +7,18 @@
 awk 'BEGIN {srand()}; rand() <= 0.01' < input.csv
 ```
 
+### `awk`: Show only the `n`th row of input data
+```sh
+# The only reason for declaring 'n' outside of the script is to make it programmable
+# elsewhere in a shell script. Otherwise, just hardcode the number.
+awk -v n=50 'NR==n {print; exit}'
+```
+
 ### `csvlook`: View headerless CSV quickly
 First, estimate (or know) the number of fields (`n`). Echo `n-1` commas and output the CSV into `head` and `csvlook`.
 ```sh
-( echo ,,,,,,,,, ; pigz -dc 'really_big_data.csv.gz')  | head -n2 | csvlook
+# csvlook -I will disable type inference and just show you the un-typed data of each column
+( echo ,,,,,,,,, ; pigz -dc 'really_big_data.csv.gz')  | head -n2 | csvlook -I
 ```
 
 ### `tail`: Skip first `n` rows of input data
