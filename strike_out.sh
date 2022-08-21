@@ -7,7 +7,7 @@
 # Defaults to "*" if no argument given.
 
 if [[ ${#1} -gt 1 ]] ; then
-    >&2 echo "One argument, one character only. Got \"$1\"."
+    >&2 echo "One argument, one character only. Got '$1'."
     exit 1
 elif [[ ${#1} -eq 0 ]] ; then
     ch="*"
